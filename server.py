@@ -81,11 +81,12 @@ class Server(object):
 
         # TODO: YOUR CODE HERE
 
-        return [
+        return (
             "You are in the room with white wall paper.",
             "You are in the room with brown wall paper.",
             "You are in the room with green wall paper.",
-            "You are in the room with blue wall paper."][room_number]
+            "You are in the room with blue wall paper."
+        )[room_number]
 
     def greet(self):
         """
@@ -117,6 +118,7 @@ class Server(object):
         received = b''
         while b'\n' not in received:
             received += self.client_connection.recv(16)
+
 
         self.input_buffer = received.decode()
 
@@ -161,6 +163,7 @@ class Server(object):
         if self.room == 3 and argument == "south":
             self.room = 0
 
+        self.output_buffer = self.room_description(self.room)
 
     def say(self, argument):
         """
@@ -178,7 +181,7 @@ class Server(object):
 
         # TODO: YOUR CODE HERE
 
-        self.output_buffer = 'You say, "{}" '.format(argument)
+        self.output_buffer = 'You say, "{}"'.format(argument)
 
     def quit(self, argument):
         """
@@ -193,7 +196,6 @@ class Server(object):
         """
 
         # TODO: YOUR CODE HERE
-
         self.done = True
         self.output_buffer = "Goodbye!"
 
@@ -212,15 +214,15 @@ class Server(object):
         # TODO: YOUR CODE HERE
 
         received = self.input_buffer.split(" ")
-
-        command = received.pop(0)
-        arguments = " ".join(recieved)
+        command = received.pop(0).strip()
+        arguments = " ".join(received).replace("\n", "")
 
         {
             'quit': self.quit,
             'move': self.move,
-            'say': self.say
+            'say': self.say,
         }[command](arguments)
+        print(command, arguments)
 
     def push_output(self):
         """
